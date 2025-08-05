@@ -1,4 +1,3 @@
 #!/bin/bash
-
-# Run the python script with the provided arguments using relative path
-python3 "$(dirname "$0")/../scripts/misfit.py" "$@"
+# Run misfit as an installed Python module
+python3 -m misfit.scripts.misfit "$@"

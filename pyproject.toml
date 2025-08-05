@@ -4,15 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "misfit"
-version = "0.1.0"
-description = "MISFIT (Mutation Inspection of Sequences for Functional Impact Tracking) detects intrinsic mutations in bacterial genomes using Minimap2 alignments and protein-level inspection."
+version = "0.0.1"
+description = "MISFIT: Mutation Identification Suite for Intrinsic Traits – a flexible intrinsic mutation analysis tool."
 readme = "README.md"
 requires-python = ">=3.9"
-
-dependencies = [
-    "biopython>=1.81",
-    "numpy>=1.23",
-]
 
 [[project.authors]]
 name = "William Shropshire"
@@ -25,18 +20,23 @@ text = "MIT"
 Homepage = "https://github.com/wshropshire/misfit"
 Repository = "https://github.com/wshropshire/misfit"
 
+# Command-line entry points
 [project.scripts]
-detect_mutations = "misfit.scripts.detect_mutations:main"
+misfit = "misfit.scripts.misfit:main"
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.package-data]
-misfit = ["reference/**"]
+misfit = ["bin/**", "binaries/**", "reference/**", "scripts/**"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["misfit*"]
 
 [tool.setuptools.dynamic.version]
-attr = "misfit.scripts.__version__.__version__"
+attr = "misfit.scripts.__init__.__version__"
+
+[project.scripts]
+misfit = "misfit.scripts.misfit:main"
+
