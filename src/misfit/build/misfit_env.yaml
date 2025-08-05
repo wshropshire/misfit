@@ -2,27 +2,13 @@ name: misfit_env
 channels:
   - conda-forge
   - bioconda
-  - defaults
-dependencies:
-  # Core Python
-  - python=3.9
-  - pip
-  - setuptools
-  - wheel
 
+dependencies:
   # Bioinformatics
   - biopython
   - minimap2
-
+  
   # Development & Logging
   - tqdm
   - numpy
   - pandas
-
-  # Optional: For building and testing
-  - pytest
-  - build
-
-  # Install MISFIT via pip after environment creation
-  - pip:
-      - .

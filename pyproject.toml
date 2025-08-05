@@ -36,7 +36,3 @@ include = ["misfit*"]
 
 [tool.setuptools.dynamic.version]
 attr = "misfit.scripts.__init__.__version__"
-
-[project.scripts]
-misfit = "misfit.scripts.misfit:main"
-

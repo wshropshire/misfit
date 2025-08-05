@@ -39,7 +39,7 @@ pip3 install build
 python -m build
 pip3 install ./dist/misfit-0.0.1.tar.gz
 # Use yaml file to build environment with all dependencies - issues with pip/conda install 'path collisions' due to pre-installed python. All dependencies are properly downloaded and identified.
-conda env update --name misfit_env --file ./src/misfit/build/misfti_env.yaml
+conda env update --name misfit_env --file ./src/misfit/build/misfit_env.yaml
 ```
 
 ---

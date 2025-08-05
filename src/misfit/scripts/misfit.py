@@ -232,11 +232,7 @@ def main():
     parser = argparse.ArgumentParser(description="Detect mutations in porin-related genes in E. coli genomes")
     parser.add_argument("assemblies", nargs='+', help="Input assembly FASTA file(s)")
     parser.add_argument("-o", "--output", required=True, help="Output TSV summary file")
-    parser.add_argument(
-        "-v", "--version", 
-        action="version", 
-        version=f"%(prog)s {__version__}",
-        help="Show program's version number and exit"
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}", help="Show program's version number and exit")
     args = parser.parse_args()
 
     # Configure logging
