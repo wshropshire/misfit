@@ -61,7 +61,7 @@ conda env update --name misfit_env --file ./src/misfit/build/misfit_env.yaml
 
 ## **Usage**
 ```bash
-python detect_mutations.py assemblies/*.fasta -o mutations_summary.tsv
+python misfit assemblies/*.fasta -o mutations_summary.tsv
 ```
 
 **Arguments:**
