@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "misfit"
+version = "0.1.0"
+description = "MISFIT (Mutation Inspection of Sequences for Functional Impact Tracking) detects intrinsic mutations in bacterial genomes using Minimap2 alignments and protein-level inspection."
+readme = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+    "biopython>=1.81",
+    "numpy>=1.23",
+]
+
+[[project.authors]]
+name = "William Shropshire"
+email = "wcshropshire@mdanderson.org"
+
+[project.license]
+text = "MIT"
+
+[project.urls]
+Homepage = "https://github.com/wshropshire/misfit"
+Repository = "https://github.com/wshropshire/misfit"
+
+[project.scripts]
+detect_mutations = "misfit.scripts.detect_mutations:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+misfit = ["reference/**"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["misfit*"]
+
+[tool.setuptools.dynamic.version]
+attr = "misfit.scripts.__version__.__version__"

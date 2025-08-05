@@ -1,0 +1,16 @@
+# Include top-level files
+include README.md
+include LICENSE.txt
+include pyproject.toml
+
+# Include all Python scripts in the misfit package
+recursive-include src/misfit *.py
+
+# Include reference FASTA files and any subdirectories
+recursive-include src/misfit/reference *
+
+# Exclude unnecessary files like pycache and temporary files
+prune **/__pycache__
+prune **/*.pyc
+prune **/*.pyo
+prune **/.DS_Store
