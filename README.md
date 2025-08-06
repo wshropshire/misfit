@@ -1,8 +1,8 @@
-# Mutation Identification in Sequences and Frameshift/ Indel Tracking (MISFIT)
+# Mutation Identification in Sequences and Frameshift/Indel Tracking (MISFIT)
 
 ## Overview
 
-The Mutation Identification in Sequences and Frameshift/ Indel Tracking (MISFIT) script detects mutations in reference genes, currently focusing on porin-related and cell wall–associated genes of *E. coli* from whole-genome assemblies. It reports mutation types (e.g., frameshift, in-frame indel, premature stop, missense) with nucleotide and amino acid statistics in a TSV summary file.
+The Mutation Identification in Sequences and Frameshift/Indel Tracking (MISFIT) script detects mutations in reference genes, currently focusing on porin-related and cell wall–associated genes of *E. coli* from whole-genome assemblies. It reports mutation types (e.g., frameshift, in-frame indel, premature stop, missense) with nucleotide and amino acid statistics in a TSV summary file.
 
 ---
 
@@ -24,9 +24,9 @@ The Mutation Identification in Sequences and Frameshift/ Indel Tracking (MISFIT)
 
 ## Installation
 
-**NOTE** I've only tested this with a Linux, RHEL 7.9 operating system. I am not sure how this will function in other OS environments. The easiest way to install is:
-
-(1) Clone the GitHub repository and then (2) create a conda environment. 
+> [!WARNING]
+> I've only tested this with a Linux, RHEL 7.9 operating system. I am not sure how this will function in other OS environments. The easiest way to install is:
+>(1) Clone the GitHub repository and then (2) create a conda environment. 
 
 ```bash
 git clone https://github.com/wshropshire/misfit
@@ -106,3 +106,10 @@ Feel free to contribute to the project by submitting issues or pull requests.
 ## Version
 
 misfit v0.0.1
+
+## TODO
+
+- [] Make reference database generation more flexible and customizable
+- [] Test edge cases where identity/coverage fail to identify best hit
+- [] Simulate data to validate
+
