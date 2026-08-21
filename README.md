@@ -36,6 +36,10 @@ Descriptions follow HGVS — three-letter codes, `Ter` for termination, indels p
 
 ## Installation
 
+> [!NOTE]
+> Developed and tested on Linux (RHEL 7.9) and macOS. Other environments should work
+> but are untested — please open an issue if you hit a platform problem.
+
 ```bash
 git clone https://github.com/wshropshire/misfit
 cd misfit
@@ -344,3 +348,31 @@ where the upstream region is conserved and cannot resolve loci where it is not.
 ## License
 
 [MIT](LICENSE.txt)
+
+---
+
+## Contributing
+
+Feel free to contribute to the project by submitting issues or pull requests.
+
+---
+
+## Version
+
+misfit v2.0.0
+
+## TODO
+
+- [x] Make reference database generation more flexible and customizable — `misfit-db`
+      adds alleles, genes and whole panels, resolving accessions and writing provenance
+- [x] Simulate data to validate — `tests/test_variants.py` builds queries by editing a
+      real CDS at known codons, so the expected call is known exactly rather than eyeballed
+- [ ] Test edge cases where identity/coverage fail to identify best hit. Partly done:
+      selection now scores absolute matching bases, which fixed a truncated allele
+      winning by being short. Partial hits under ~90% `Nuc_COV` still produce confident calls.
+- [ ] Report a gene split by a large insertion as a disruption rather than a truncation
+      of whichever fragment aligns better, and anchor the coordinates to the 5' fragment
+- [ ] Measure truncation against the matched allele's length, not the longest allele in the file
+- [ ] Detect start-loss (`p.Met1?`) as its own category
+- [ ] Flag partial hits as unassessable instead of calling them
+
