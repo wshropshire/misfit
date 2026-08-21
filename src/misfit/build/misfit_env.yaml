@@ -7,3 +7,4 @@ dependencies:
   - python>=3.9
   - biopython>=1.80
   - minimap2
+  - openpyxl        # misfit-wide, for .xlsx output

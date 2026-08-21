@@ -38,6 +38,20 @@ from .misfit import (
 )
 
 
+def _available_cpus():
+    """Cores this process may actually use.
+
+    os.cpu_count() reports the machine's cores, which on a scheduler-managed
+    node is the whole box rather than the allocation - asking for 4 cores and
+    spawning 128 workers is a good way to have the job killed. Linux exposes
+    the real affinity mask; elsewhere fall back to the machine count.
+    """
+    try:
+        return len(os.sched_getaffinity(0))          # Linux, respects cgroups/taskset
+    except AttributeError:
+        return os.cpu_count() or 4
+
+
 def _one(job):
     """Call one assembly against one panel, returning the rows it produced."""
     fasta, ref_dir, preset, genes = job
@@ -83,7 +97,9 @@ def main():
     ap.add_argument("--gene-list", default=None,
                     help="File of genes of interest: one per line, or a table with a gene "
                          "column and an optional panel/species column")
-    ap.add_argument("--jobs", type=int, default=os.cpu_count() or 4)
+    ap.add_argument("--jobs", type=int, default=_available_cpus(),
+                    help="Worker processes (default: the cores available to "
+                         "this process, not the machine's total)")
     args = ap.parse_args()
 
     logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s", level=logging.INFO)
