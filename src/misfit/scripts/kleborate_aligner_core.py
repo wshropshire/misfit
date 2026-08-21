@@ -7,8 +7,6 @@ import re
 import subprocess
 import shutil
 import sys
-from Bio.Seq import Seq
-from Bio.Data.CodonTable import TranslationError
 from .misc import load_fasta, reverse_complement
 
 class Alignment:
@@ -71,6 +69,24 @@ class Alignment:
             if self.strand == '-':
                 self.ref_seq = reverse_complement(self.ref_seq)
 
+    # MISFIT runs minimap2 with the gene panel as the QUERY and the assembly as
+    # the TARGET, so the PAF-correct field names read backwards here. These
+    # aliases name the roles as MISFIT actually uses them.
+    @property
+    def allele_name(self):
+        """The reference allele this alignment used."""
+        return self.query_name
+
+    @property
+    def allele_cov(self):
+        """Percent of that reference allele covered by the alignment."""
+        return self.query_cov
+
+    @property
+    def sample_contig(self):
+        """The assembly contig the gene was found on."""
+        return self.ref_name
+
     def __repr__(self):
         return f"{self.query_name}:{self.query_start}-{self.query_end}({self.strand}), " \
                f"{self.ref_name}:{self.ref_start}-{self.ref_end} ({self.percent_identity:.3f}%)"
@@ -104,10 +120,13 @@ def align_query_to_ref(query_filename, ref_filename, ref_index=None, preset='map
         ], stderr=dev_null)
     alignments = [Alignment(x, query_seqs=query_seqs, ref_seqs=ref_seqs)
                   for x in out.decode().splitlines()]
-    print(f"→ Loaded {len(ref_seqs)} reference sequences: {[k for k in ref_seqs.keys()]}")
+    print(f"→ Query: {len(query_seqs)} reference allele(s) from {os.path.basename(str(query_filename))}")
+    print(f"→ Subject: {len(ref_seqs)} contig(s) from {os.path.basename(str(ref_filename))}")
     print(f"→ Minimap2 returned {len(alignments)} alignments:")
     for aln in alignments:
-        print(f"  Ref: {aln.ref_name}, Identity: {aln.percent_identity:.1f}, Coverage: {aln.query_cov:.1f}")
+        print(f"  allele={aln.allele_name}  contig={aln.sample_contig}  "
+              f"identity={aln.percent_identity:.1f}%  allele_cov={aln.allele_cov:.1f}%  "
+              f"matching_bases={aln.matching_bases}")
 
     if min_identity is not None:
         alignments = [a for a in alignments if a.percent_identity >= min_identity]
@@ -115,11 +134,25 @@ def align_query_to_ref(query_filename, ref_filename, ref_index=None, preset='map
         alignments = [a for a in alignments if a.query_cov >= min_query_coverage]
     return alignments
 
-def cull_redundant_hits(minimap_hits, w_id=0.6, w_cov=0.4):
-    # Score = weighted identity + coverage; default: 60% ID + 40% coverage
+def cull_redundant_hits(minimap_hits):
+    """Pick the best alignment, scoring by how much sequence actually matched.
+
+    Coverage expressed as a fraction of each reference allele's own length
+    lets a short allele win by being short: a 435 bp truncated ompK35 scores
+    100% coverage against an isolate whose gene is full length, beating the
+    real 1080 bp allele and turning an intact porin into a frameshift call.
+    Absolute matching bases has no such bias.
+
+    A consequence worth knowing: identity alone does not decide the winner.
+    Identity is matching_bases / alignment_length, so a longer allele matching
+    more bases beats a shorter one at marginally higher identity -- 94.2% over
+    1131 bases beats 94.4% over 1104. That is deliberate; more of the gene was
+    actually matched. The diagnostic prints matching_bases so the choice can be
+    checked rather than inferred.
+    """
     sorted_hits = sorted(
         minimap_hits,
-        key=lambda x: (w_id * x.percent_identity + w_cov * x.query_cov),
+        key=lambda x: (x.matching_bases, x.percent_identity),
         reverse=True
     )
 
@@ -133,10 +166,12 @@ def cull_redundant_hits(minimap_hits, w_id=0.6, w_cov=0.4):
     else:
         best = sorted_hits[0]
 
-    print("\n→ Selected best hit:")
-    print(f"  Ref: {best.ref_name}")
-    print(f"  Identity: {best.percent_identity:.1f}%")
-    print(f"  Coverage: {best.query_cov:.1f}%")
+    print("\n→ Selected best hit (most matching bases, then identity):")
+    print(f"  allele        : {best.allele_name}")
+    print(f"  contig        : {best.sample_contig}:{best.ref_start + 1}-{best.ref_end} "
+          f"({best.strand})")
+    print(f"  matching_bases: {best.matching_bases}   identity: {best.percent_identity:.1f}%   "
+          f"allele_cov: {best.allele_cov:.1f}%")
     return best
 
 def overlapping(hit, existing_hits):

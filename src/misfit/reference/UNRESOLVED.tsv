@@ -1,0 +1,35 @@
+panel	gene	assembly_accession	organism	searched_gene_names	searched_products
+e_coli	ampR	GCF_000005845.2	Escherichia coli str. K-12 substr. MG1655	ampR	-
+e_coli	ramA	GCF_000005845.2	Escherichia coli str. K-12 substr. MG1655	-	^RamA family antibiotic efflux transcriptional regulator$
+k_pneumoniae	ampC	GCF_006364295.1	Klebsiella pneumoniae FDAARGOS_775	ampC,blaACT,ampC-Kaer	cephalosporin-hydrolyzing class C | ^class C beta-lactamase | class C beta-lactamase | extended-spectrum class C
+k_pneumoniae	ampR	GCF_006364295.1	Klebsiella pneumoniae FDAARGOS_775	ampR	-
+k_pneumoniae	fecA	GCF_006364295.1	Klebsiella pneumoniae FDAARGOS_775	fecA	-
+k_pneumoniae	ompF	GCF_006364295.1	Klebsiella pneumoniae FDAARGOS_775	ompF	-
+enterobacter	arnA	GCF_019048245.1	Enterobacter hormaechei	arnA,yfbG	-
+enterobacter	arnB	GCF_019048245.1	Enterobacter hormaechei	arnB,yfbE	-
+enterobacter	arnC	GCF_019048245.1	Enterobacter hormaechei	arnC,yfbF	-
+enterobacter	arnD	GCF_019048245.1	Enterobacter hormaechei	arnD,yfbH	-
+enterobacter	arnE	GCF_019048245.1	Enterobacter hormaechei	arnE,yfbJ	-
+enterobacter	arnF	GCF_019048245.1	Enterobacter hormaechei	arnF,yfbK	-
+enterobacter	arnT	GCF_019048245.1	Enterobacter hormaechei	arnT,yfbI,pmrK	-
+enterobacter	cirA	GCF_019048245.1	Enterobacter hormaechei	cirA	catecholate siderophore receptor CirA | Fe-catecholate outer membrane transporter
+enterobacter	fecA	GCF_019048245.1	Enterobacter hormaechei	fecA	-
+enterobacter	fepA	GCF_019048245.1	Enterobacter hormaechei	fepA	-
+enterobacter	fiu	GCF_019048245.1	Enterobacter hormaechei	fiu	catecholate siderophore receptor Fiu | Fe catecholate outer membrane transporter
+enterobacter	pmrD	GCF_019048245.1	Enterobacter hormaechei	pmrD	-
+citrobacter	cirA	GCF_904859905.1	Citrobacter freundii MSB1_1H	cirA	catecholate siderophore receptor CirA | Fe-catecholate outer membrane transporter
+citrobacter	fepA	GCF_904859905.1	Citrobacter freundii MSB1_1H	fepA	-
+k_oxytoca	ampC	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ampC,blaACT,ampC-Kaer	cephalosporin-hydrolyzing class C | ^class C beta-lactamase | class C beta-lactamase | extended-spectrum class C
+k_oxytoca	ampR	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ampR	-
+k_oxytoca	fepA	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	fepA	-
+k_oxytoca	fiu	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	fiu	catecholate siderophore receptor Fiu | Fe catecholate outer membrane transporter
+k_oxytoca	ompF	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ompF	-
+k_oxytoca	ompK35	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ompK35	^porin OmpK35$
+k_oxytoca	ompK36	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ompK36	^porin OmpK36$
+k_oxytoca	ompK37	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ompK37	^porin OmpK37$
+k_oxytoca	pmrD	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	pmrD	-
+k_aerogenes	fecA	GCF_019048125.1	Klebsiella aerogenes	fecA	-
+k_aerogenes	fiu	GCF_019048125.1	Klebsiella aerogenes	fiu	catecholate siderophore receptor Fiu | Fe catecholate outer membrane transporter
+k_aerogenes	ompF	GCF_019048125.1	Klebsiella aerogenes	ompF	-
+k_aerogenes	ompK37	GCF_019048125.1	Klebsiella aerogenes	ompK37	^porin OmpK37$
+k_aerogenes	pmrD	GCF_019048125.1	Klebsiella aerogenes	pmrD	-

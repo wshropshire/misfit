@@ -4,11 +4,6 @@ channels:
   - bioconda
 
 dependencies:
-  # Bioinformatics
-  - biopython
+  - python>=3.9
+  - biopython>=1.80
   - minimap2
-  
-  # Development & Logging
-  - tqdm
-  - numpy
-  - pandas

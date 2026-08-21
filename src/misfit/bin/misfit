@@ -1,3 +1,0 @@
-#!/bin/bash
-# Run misfit as an installed Python module
-python3 -m misfit.scripts.misfit "$@"

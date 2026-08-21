@@ -1,4 +1,4 @@
-# Ignore macOS metadata
+# macOS metadata
 .DS_Store
 
 # Python cache
@@ -10,11 +10,18 @@ __pycache__/
 .venv/
 *.env
 
-# Build artifacts
-build/
-dist/
+# Build artifacts (root only: src/misfit/build holds the conda env spec)
+/build/
+/dist/
 *.egg-info/
 
-# VS Code settings
+# Editors / local tooling
 .vscode/
+.idea/
+.claude/settings.local.json
 
+# Geneious collection folders, created by opening a reference FASTA in Geneious.
+# They sit beside the real ref_<gene>.fasta as a directory of the same stem.
+src/misfit/reference/*/ref_*/
+*.clxn
+.collection
