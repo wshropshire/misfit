@@ -6,5 +6,5 @@ channels:
 dependencies:
   - python>=3.9
   - biopython>=1.80
-  - minimap2
-  - openpyxl        # misfit-wide, for .xlsx output
+  - minimap2>=2.24     # floor matters: unpinned, the solver can land on 2.1.1 (2017)
+  - openpyxl           # misfit-wide, for .xlsx output
