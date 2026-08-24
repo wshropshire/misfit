@@ -2,9 +2,11 @@
 
 ## v1.0.0
 
-The first stable release. A large update over v0.0.1: six organism panels instead
-of two, HGVS nomenclature throughout, a corrected coordinate system, four commands
-instead of one, and substantially faster runs.
+The first stable release. Two changes matter most: the reference set goes from 7
+E. coli genes to six organism panels holding ~900 screened sequences, and a bug
+that misnumbered variants downstream of an insertion is fixed. Nomenclature is now
+HGVS throughout, there are four commands instead of one, and runs are substantially
+faster.
 
 Numbered 1.0.0 rather than 2.0.0 — semver treats 0.x as pre-stable, so this is the
 first stable version rather than a second major one.
