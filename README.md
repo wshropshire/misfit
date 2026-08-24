@@ -2,13 +2,14 @@
 
 **M**utation **I**dentification in **S**equences and **F**rameshift/**I**ndel **T**racking.
 
-MISFIT answers one question: *how does this isolate's copy of gene X differ from a
-reference copy of gene X?* It finds the gene in an assembly, compares it to a panel of
+MISFIT identifies gene hits based off identity and coverage in an assembly, compares it to a panel of
 reference alleles for that organism, and reports the difference in HGVS notation.
 
-It is aimed at the chromosomal genes behind beta-lactam and cefiderocol resistance in
-Enterobacterales — PBPs, porins and their regulators, efflux systems, AmpC regulation
-and iron-uptake receptors.
+It is aimed at the chromosomal genes behind intrinsic antimicrobial resistance mechanisms in
+Enterobacterales with a special emphasis on beta-lactam resistance (e.g., PBPs, porins and 
+their regulators, efflux systems, AmpC regulation and iron-uptake receptors). 
+Nevertheless, misfit can be adapted for an drug-bug combination of interest by curating 
+your own misfit database (misfit-db). 
 
 ---
 
@@ -25,12 +26,9 @@ For every assembly x gene:
 | `HGVS_c` | the same change in nucleotide coordinates, e.g. `c.1000_1011dup` |
 | `Notes` | canonical-allele numbering where it differs, plus cross-references to other tools |
 
-Positions are **reference coordinates**: an insertion in the sample does not renumber
-what follows it. An isolate carrying both the PBP3 333-loop duplication and the A413V
-substitution reads `p.Tyr334_Asn337dup; p.Ala413Val`, never `p.Ala417Val`.
-
-Descriptions follow HGVS — three-letter codes, `Ter` for termination, indels placed
-3'-most, and an insertion that copies its 5' neighbour written as a duplication.
+Positions are **reference coordinates**. Descriptions follow HGVS 
+— three-letter codes, `Ter` for termination, indels placed3'-most, 
+and an insertion that copies its 5' neighbor written as a duplication.
 
 ---
 
@@ -99,8 +97,6 @@ misfit --list-organisms
 - `--gene-list` — a file of genes of interest, optionally per organism
 - `--ref-dir` — use an arbitrary directory of reference FASTAs instead
 - `--list-organisms` — list the available panels and exit
-
-**Only the matched panel is read.** Genes from other organisms' panels are never used.
 
 ### Examining only some genes
 
@@ -171,13 +167,15 @@ tends to return nothing rather than a safer answer. `asm5` loses genes at ordina
 within-species variation.
 
 If unsure, run the default and re-run only the assemblies whose genes came back
-`Not found` with `--preset asm20` to see whether they are recovered.
+`Not found` with `--preset asm20` to see whether they are recovered. 
+
+**I have not tested against the asm5, asm10 default so user beware**
 
 ---
 
 ## Reference panels
 
-Six panels, ~900 sequences, every one traceable to a RefSeq record:
+Six panels every one traceable to a RefSeq record:
 
 | panel | genes | covers |
 |---|---|---|
@@ -194,7 +192,8 @@ the genus. MISFIT compares each isolate to whichever allele fits it best, so ord
 lineage variation is not reported as mutation. `reference/PROVENANCE.tsv` records the
 assembly, nucleotide, locus-tag and protein accession behind every sequence;
 `reference/UNRESOLVED.tsv` lists genes deliberately left out because RefSeq does not
-identify them.
+identify them. **I have primarily tested against *E. coli* and *K. pneumoniae* so should
+confirm mutations in other species present.
 
 Alleles are screened so a reference can never carry a resistance determinant: intact
 ORF, expected length, no PBP3 333-loop insertion, no carbapenemase or ESBL in the source
@@ -225,8 +224,7 @@ different field.
 
 Pass the same species map `misfit-multi` takes and the output is split per species,
 which matters because panels differ between organisms: `ampC` is in some panels and not
-others, so a single combined table is unavoidably ragged. Splitting gives each species
-only its own genes.
+others. Splitting gives each species only its own genes.
 
 ```bash
 # one Excel workbook, one tab per species (the default when a map is given)
