@@ -1,9 +1,13 @@
 # Changelog
 
-## v2.0.0
+## v1.0.0
 
-A large update: six organism panels instead of two, HGVS nomenclature throughout,
-a corrected coordinate system, and substantially faster runs.
+The first stable release. A large update over v0.0.1: six organism panels instead
+of two, HGVS nomenclature throughout, a corrected coordinate system, four commands
+instead of one, and substantially faster runs.
+
+Numbered 1.0.0 rather than 2.0.0 — semver treats 0.x as pre-stable, so this is the
+first stable version rather than a second major one.
 
 ### Fixed — coordinates
 

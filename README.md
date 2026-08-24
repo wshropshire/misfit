@@ -359,7 +359,7 @@ Feel free to contribute to the project by submitting issues or pull requests.
 
 ## Version
 
-misfit v2.0.0
+misfit v1.0.0
 
 ## TODO
 
