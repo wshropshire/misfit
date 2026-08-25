@@ -8,7 +8,7 @@ reference alleles for that organism, and reports the difference in HGVS notation
 It is aimed at the chromosomal genes behind intrinsic antimicrobial resistance mechanisms in
 Enterobacterales with a special emphasis on beta-lactam resistance (e.g., PBPs, porins and 
 their regulators, efflux systems, AmpC regulation and iron-uptake receptors). 
-Nevertheless, misfit can be adapted for an drug-bug combination of interest by curating 
+Nevertheless, misfit can be adapted for any drug-bug combination of interest by curating 
 your own misfit database (misfit-db). 
 
 ---
