@@ -55,3 +55,11 @@ def test_refseq_name_wins():
     target = [cds("geneX", mutate(X, 0.3)), unnamed(cds("t1", mutate(X, 0.05)))]
     cand, ev = find_ortholog("geneX", target, seed, seed_proteome)
     assert cand["gene"] == "geneX" and ev == "refseq_gene_name"
+
+
+def test_long_protein_does_not_win():
+    """A much longer protein must not beat the true ortholog through gappy alignment."""
+    long = "".join(rnd.choice(AA) for _ in range(3400))
+    target = [unnamed(cds("big", long)), unnamed(cds("t1", mutate(X, 0.25)))]
+    cand, ev = find_ortholog("geneX", target, seed, seed_proteome, min_id=60)
+    assert cand is not None and cand["protein_id"] == "WP_t1", ev

@@ -670,21 +670,52 @@ def _kmers(aa, k=3):
     return {aa[i:i + k] for i in range(len(aa) - k + 1)}
 
 
+# Ortholog search uses a conventional protein alignment: BLOSUM62, gap open 11 /
+# extend 1, free end gaps. Identity is BLAST-style - matches over every aligned
+# column between the first and last aligned residue, internal gaps included. (With
+# cheap gaps and identity counted over gap-free columns only, two unrelated
+# proteins of equal length score ~75%, which makes any identity threshold useless.)
+_ORTH = None
+
+
+def _orth_aligner():
+    global _ORTH
+    if _ORTH is None:
+        from Bio.Align import substitution_matrices
+        _ORTH = Align.PairwiseAligner(mode="global",
+                                      substitution_matrix=substitution_matrices.load("BLOSUM62"),
+                                      open_gap_score=-11, extend_gap_score=-1)
+        _ORTH.end_gap_score = 0
+    return _ORTH
+
+
 def aa_hit(q, t):
-    """(identity %, coverage % of q) from a global protein alignment."""
-    aln = _AA.align(q, t)[0]
-    pairs = [(x, y) for x, y in zip(aln[0], aln[1]) if x != "-" and y != "-"]
-    m = sum(1 for x, y in pairs if x == y)
-    return (100.0 * m / len(pairs) if pairs else 0.0,
-            100.0 * len(pairs) / len(q) if q else 0.0)
+    """(identity %, coverage % of q) from a BLOSUM62 global alignment with free end gaps."""
+    q, t = q.replace("*", "X"), t.replace("*", "X")
+    aln = _orth_aligner().align(q, t)[0]
+    cols = list(zip(aln[0], aln[1]))
+    idx = [i for i, (x, y) in enumerate(cols) if x != "-" and y != "-"]
+    if not idx:
+        return 0.0, 0.0
+    span = cols[idx[0]: idx[-1] + 1]
+    m = sum(1 for x, y in span if x == y and x != "-")
+    return 100.0 * m / len(span), 100.0 * len(idx) / len(q)
 
 
-def best_hits(query_aa, proteome, top=10, prefilter=40):
-    """Proteome entries ranked by identity to query_aa (k-mer prefilter, then align)."""
+def best_hits(query_aa, proteome, top=10, prefilter=40, len_tol=0.30):
+    """Proteome entries ranked by identity to query_aa (k-mer prefilter, then align).
+
+    Only proteins within +/-len_tol of the query length are considered. A global
+    alignment against a much longer protein (a 3,400 aa adhesin against a 660 aa
+    receptor) can thread the query through scattered matching residues with cheap
+    gaps and report a spuriously high identity, so length is screened first.
+    """
     qk = _kmers(query_aa)
     if not qk:
         return []
-    scored = sorted(proteome, key=lambda c: -len(qk & _kmers(c["aa"])))[:prefilter]
+    lo, hi = len(query_aa) * (1 - len_tol), len(query_aa) * (1 + len_tol)
+    pool = [c for c in proteome if lo <= len(c["aa"]) <= hi]
+    scored = sorted(pool, key=lambda c: -len(qk & _kmers(c["aa"])))[:prefilter]
     hits = []
     for c in scored:
         pid, cov = aa_hit(query_aa, c["aa"])
