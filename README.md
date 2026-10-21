@@ -339,6 +339,9 @@ another panel (the *seed*), and accepted only if
 misfit-db add-ortholog --panel enterobacter --gene cirA,fiu,fepA \
     --from-assembly GCF_019048245.1 --seed e_coli
 
+# a gene absent from the panel's primary genome: try its other genomes in turn
+misfit-db add-ortholog --panel enterobacter --gene cirA --from-provenance --seed e_coli
+
 # the same genes for every species the panel already represents
 misfit-db extend-panel --panel enterobacter --genes cirA,fiu,fepA --from-provenance
 
@@ -356,6 +359,31 @@ coverage; reciprocal best hit in GCF_000005845.2`); genes still not found are ad
 `UNRESOLVED.tsv` with the reason. `add-panel --genes-like` defaults to 50% identity
 because a new genus can sit far from the template (Morganellaceae vs *E. coli*); review
 low-identity genes before relying on them, and run such panels with `--preset asm20`.
+
+Three further cases:
+
+- **Synteny (`--neighbor-of GENE --product-regex REGEX`).** Some regulators have no seed
+  allele and are left unnamed by RefSeq, but sit at a fixed place: *ramR* is the
+  TetR-family repressor next to *ramA*, *ampR* the LysR-family regulator next to *ampC*.
+  The anchor is found by its own panel allele (≥70% identity, ≥80% coverage), and the
+  nearest CDS within 2 genes on the same contig whose RefSeq product matches the regex is
+  taken; the evidence reads `neighbour of ramA (locus, 1 gene(s) away) with product '…'`.
+- **Alternative start codons.** An annotated RefSeq CDS that starts with a table-11
+  alternative start (ATT, ATC, ATA, CTG; e.g. *Providencia* `ampC`, `ampD`) is accepted
+  and the start codon is recorded in the evidence.
+- **Divergent genera.** `extend-panel --min-identity` sets both the ortholog floor and the
+  allele screen (default 80%); use ~70 for a genus panel whose species differ widely.
+
+The check that a new gene is not already in the panel under another name uses the same
+BLOSUM62 identity and requires the two proteins to be of comparable length (≥0.8), so a
+short protein (`arnE`, `exbD`, `pmrD`) is no longer taken for part of a long one.
+
+```bash
+misfit-db add-ortholog --panel k_pneumoniae --gene ramR --from-provenance \
+    --neighbor-of ramA --product-regex 'TetR|RamR'
+misfit-db add-ortholog --panel serratia --gene ampR --from-provenance \
+    --neighbor-of ampC --product-regex 'LysR|AmpR'
+```
 
 ---
 

@@ -15,6 +15,21 @@
 - `misfit-db add-panel --reference-taxon NAME --genes-like PANEL[,PANEL]`: seed a new
   organism panel with every gene of the template panel(s).
 - RefSeq CDS downloads are cached (`ncbi_cache/<accession>.cds.fna`).
+- `add-ortholog --neighbor-of GENE --product-regex REGEX`: synteny route for genes with
+  no seed allele and no RefSeq name (`ramR` beside `ramA`, `ampR` beside `ampC`).
+- `add-ortholog --from-provenance`: try each genome the panel already uses until one
+  carries the gene (`cirA` is absent from the *E. hormaechei* reference).
+
+### Fixed — `misfit-db`
+
+- Ortholog identity is BLOSUM62/BLAST-style with a ±30% length prefilter; the gap-free
+  identity let a 3,436 aa protein outrank the true `cirA`.
+- The "already in the panel" check for a new gene used the gap-free identity and
+  rejected short proteins (`arnE`, `exbD`, `pmrD`) as copies of unrelated long ones; it now
+  uses the BLOSUM62 identity and requires comparable lengths.
+- Annotated CDS with table-11 alternative starts (ATT/ATC/ATA/CTG) were rejected.
+- `extend-panel --min-identity` now also sets the allele screen, so species alleles of a
+  diverse genus are not rejected at the fixed 80%.
 
 ## v1.0.0
 
