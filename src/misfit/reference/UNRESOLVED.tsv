@@ -1,0 +1,118 @@
+panel	gene	assembly_accession	organism	searched_gene_names	searched_products
+e_coli	ampR	GCF_000005845.2	Escherichia coli str. K-12 substr. MG1655	ampR	-
+e_coli	ramA	GCF_000005845.2	Escherichia coli str. K-12 substr. MG1655	-	^RamA family antibiotic efflux transcriptional regulator$
+k_pneumoniae	ampC	GCF_006364295.1	Klebsiella pneumoniae FDAARGOS_775	ampC,blaACT,ampC-Kaer	cephalosporin-hydrolyzing class C | ^class C beta-lactamase | class C beta-lactamase | extended-spectrum class C
+k_pneumoniae	ampR	GCF_006364295.1	Klebsiella pneumoniae FDAARGOS_775	ampR	-
+k_pneumoniae	fecA	GCF_006364295.1	Klebsiella pneumoniae FDAARGOS_775	fecA	-
+k_pneumoniae	ompF	GCF_006364295.1	Klebsiella pneumoniae FDAARGOS_775	ompF	-
+enterobacter	arnA	GCF_019048245.1	Enterobacter hormaechei	arnA,yfbG	-
+enterobacter	arnB	GCF_019048245.1	Enterobacter hormaechei	arnB,yfbE	-
+enterobacter	arnC	GCF_019048245.1	Enterobacter hormaechei	arnC,yfbF	-
+enterobacter	arnD	GCF_019048245.1	Enterobacter hormaechei	arnD,yfbH	-
+enterobacter	arnE	GCF_019048245.1	Enterobacter hormaechei	arnE,yfbJ	-
+enterobacter	arnF	GCF_019048245.1	Enterobacter hormaechei	arnF,yfbK	-
+enterobacter	arnT	GCF_019048245.1	Enterobacter hormaechei	arnT,yfbI,pmrK	-
+enterobacter	cirA	GCF_019048245.1	Enterobacter hormaechei	cirA	catecholate siderophore receptor CirA | Fe-catecholate outer membrane transporter
+enterobacter	fecA	GCF_019048245.1	Enterobacter hormaechei	fecA	-
+enterobacter	fepA	GCF_019048245.1	Enterobacter hormaechei	fepA	-
+enterobacter	fiu	GCF_019048245.1	Enterobacter hormaechei	fiu	catecholate siderophore receptor Fiu | Fe catecholate outer membrane transporter
+enterobacter	pmrD	GCF_019048245.1	Enterobacter hormaechei	pmrD	-
+citrobacter	cirA	GCF_904859905.1	Citrobacter freundii MSB1_1H	cirA	catecholate siderophore receptor CirA | Fe-catecholate outer membrane transporter
+citrobacter	fepA	GCF_904859905.1	Citrobacter freundii MSB1_1H	fepA	-
+k_oxytoca	ampC	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ampC,blaACT,ampC-Kaer	cephalosporin-hydrolyzing class C | ^class C beta-lactamase | class C beta-lactamase | extended-spectrum class C
+k_oxytoca	ampR	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ampR	-
+k_oxytoca	fepA	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	fepA	-
+k_oxytoca	fiu	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	fiu	catecholate siderophore receptor Fiu | Fe catecholate outer membrane transporter
+k_oxytoca	ompF	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ompF	-
+k_oxytoca	ompK35	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ompK35	^porin OmpK35$
+k_oxytoca	ompK36	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ompK36	^porin OmpK36$
+k_oxytoca	ompK37	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	ompK37	^porin OmpK37$
+k_oxytoca	pmrD	GCF_900636985.1	Klebsiella oxytoca NCTC 13727	pmrD	-
+k_aerogenes	fecA	GCF_019048125.1	Klebsiella aerogenes	fecA	-
+k_aerogenes	fiu	GCF_019048125.1	Klebsiella aerogenes	fiu	catecholate siderophore receptor Fiu | Fe catecholate outer membrane transporter
+k_aerogenes	ompF	GCF_019048125.1	Klebsiella aerogenes	ompF	-
+k_aerogenes	ompK37	GCF_019048125.1	Klebsiella aerogenes	ompK37	^porin OmpK37$
+k_aerogenes	pmrD	GCF_019048125.1	Klebsiella aerogenes	pmrD	-
+serratia	cirA	GCF_030291735.1	Serratia marcescens ELP1.10	cirA	ortholog search: best homolog WP_004935657.1 (ligand-gated channel protein) only 35.8% identity / 94% coverage to cirA|NP_416660.1|NC_000913.3|b2155
+serratia	fiu	GCF_030291735.1	Serratia marcescens ELP1.10	fiu	ortholog search: best homolog WP_280630889.1 (TonB-dependent siderophore receptor) only 26.4% identity / 88% coverage to fiu|NP_415326.1|NC_000913.3|b0805
+serratia	marA	GCF_030291735.1	Serratia marcescens ELP1.10	marA	ortholog search: best homolog WP_280630764.1 (helix-turn-helix domain-containing prote) only 43.3% identity / 97% coverage to marA|NP_416048.2|NC_000913.3|b1531
+serratia	marR	GCF_030291735.1	Serratia marcescens ELP1.10	marR	ortholog search: best homolog WP_004931301.1 (transcriptional regulator SlyA) only 28.6% identity / 92% coverage to marR|NP_416047.4|NC_000913.3|b1530
+serratia	mdtE	GCF_030291735.1	Serratia marcescens ELP1.10	mdtE	ortholog search: not a reciprocal best hit: WP_004940290.1 matches acrA (multidrug efflux pump membrane fusion li, 77.5%) in GCF_000005845.2 better than the seed (55.8%)
+serratia	mdtF	GCF_030291735.1	Serratia marcescens ELP1.10	mdtF	ortholog search: not a reciprocal best hit: WP_004940301.1 matches acrB (multidrug efflux pump RND permease AcrB, 83.7%) in GCF_000005845.2 better than the seed (71.8%)
+serratia	pmrD	GCF_030291735.1	Serratia marcescens ELP1.10	pmrD	ortholog search: best homolog WP_004929776.1 (50S ribosomal protein L23) only 21.6% identity / 89% coverage to pmrD|NP_416762.2|NC_000913.3|b2259
+serratia	ramA	GCF_030291735.1	Serratia marcescens ELP1.10	ramA	ortholog search: best homolog WP_004928813.1 (helix-turn-helix domain-containing prote) only 42.4% identity / 99% coverage to ramA|WP_032673604.1|NZ_CP077308.1|I6L63_RS15270
+serratia	ramR	GCF_030291735.1	Serratia marcescens ELP1.10	ramR	ortholog search: best homolog WP_021503995.1 (CerR family C-terminal domain-containing) only 25.8% identity / 89% coverage to ramR|WP_032673605.1|NZ_CP077308.1|I6L63_RS15280
+serratia	soxS	GCF_030291735.1	Serratia marcescens ELP1.10	soxS	ortholog search: best homolog WP_004928813.1 (helix-turn-helix domain-containing prote) only 46.7% identity / 100% coverage to soxS|NP_418486.1|NC_000913.3|b4062
+serratia	ugd	GCF_030291735.1	Serratia marcescens ELP1.10	ugd	ortholog search: best homolog WP_004932175.1 (UDP-glucose dehydrogenase family protein) only 27.7% identity / 99% coverage to ugd|NP_416532.1|NC_000913.3|b2028
+providencia	acrD	GCF_035747985.1	Providencia stuartii 41	acrD	ortholog search: not a reciprocal best hit: WP_004922465.1 matches acrB (multidrug efflux pump RND permease AcrB, 75.5%) in GCF_000005845.2 better than the seed (63.8%)
+providencia	cirA	GCF_035747985.1	Providencia stuartii 41	cirA	ortholog search: best homolog WP_004926288.1 (TonB-dependent receptor domain-containin) only 36.3% identity / 93% coverage to cirA|NP_416660.1|NC_000913.3|b2155
+providencia	eptA	GCF_035747985.1	Providencia stuartii 41	eptA	ortholog search: best homolog WP_004927389.1 (phosphoethanolamine transferase CptA) only 22.8% identity / 92% coverage to eptA|NP_418538.2|NC_000913.3|b4114
+providencia	fecA	GCF_035747985.1	Providencia stuartii 41	fecA	ortholog search: best homolog WP_036941908.1 (secretin and TonB N-terminal domain-cont) only 20.3% identity / 94% coverage to fecA|NP_418711.1|NC_000913.3|b4291
+providencia	fepA	GCF_035747985.1	Providencia stuartii 41	fepA	ortholog search: best homolog WP_036941908.1 (secretin and TonB N-terminal domain-cont) only 20.8% identity / 94% coverage to fepA|NP_415116.1|NC_000913.3|b0584
+providencia	fhuA	GCF_035747985.1	Providencia stuartii 41	fhuA	ortholog search: best homolog WP_014656749.1 (TonB-dependent siderophore receptor) only 24.0% identity / 92% coverage to fhuA|NP_414692.1|NC_000913.3|b0150
+providencia	fiu	GCF_035747985.1	Providencia stuartii 41	fiu	ortholog search: best homolog WP_014656749.1 (TonB-dependent siderophore receptor) only 24.0% identity / 89% coverage to fiu|NP_415326.1|NC_000913.3|b0805
+providencia	marA	GCF_035747985.1	Providencia stuartii 41	marA	ortholog search: best homolog WP_004915952.1 (helix-turn-helix domain-containing prote) only 41.9% identity / 91% coverage to marA|NP_416048.2|NC_000913.3|b1531
+providencia	marR	GCF_035747985.1	Providencia stuartii 41	marR	ortholog search: best homolog WP_272572852.1 (MarR family winged helix-turn-helix tran) only 29.7% identity / 99% coverage to marR|NP_416047.4|NC_000913.3|b1530
+providencia	mdtE	GCF_035747985.1	Providencia stuartii 41	mdtE	ortholog search: best homolog WP_325984495.1 (efflux RND transporter periplasmic adapt) only 49.2% identity / 100% coverage to mdtE|NP_417970.1|NC_000913.3|b3513
+providencia	mdtF	GCF_035747985.1	Providencia stuartii 41	mdtF	ortholog search: not a reciprocal best hit: WP_004922465.1 matches acrB (multidrug efflux pump RND permease AcrB, 75.5%) in GCF_000005845.2 better than the seed (67.7%)
+providencia	ompF	GCF_035747985.1	Providencia stuartii 41	ompF	ortholog search: not a reciprocal best hit: WP_148271244.1 matches ompC (outer membrane porin C, 57.7%) in GCF_000005845.2 better than the seed (50.3%)
+providencia	phoE	GCF_035747985.1	Providencia stuartii 41	phoE	ortholog search: not a reciprocal best hit: WP_148271244.1 matches ompC (outer membrane porin C, 57.7%) in GCF_000005845.2 better than the seed (52.7%)
+providencia	pmrA	GCF_035747985.1	Providencia stuartii 41	pmrA	ortholog search: best homolog WP_004915700.1 (quorum sensing response regulator transc) only 41.4% identity / 99% coverage to pmrA|NP_418537.1|NC_000913.3|b4113
+providencia	pmrB	GCF_035747985.1	Providencia stuartii 41	pmrB	ortholog search: best homolog WP_004920930.1 (sensor histidine kinase) only 24.7% identity / 96% coverage to pmrB|NP_418536.1|NC_000913.3|b4112
+providencia	pmrD	GCF_035747985.1	Providencia stuartii 41	pmrD	ortholog search: best homolog WP_008914587.1 (co-chaperone GroES) only 24.7% identity / 85% coverage to pmrD|NP_416762.2|NC_000913.3|b2259
+providencia	ramA	GCF_035747985.1	Providencia stuartii 41	ramA	ortholog search: best homolog WP_004915952.1 (helix-turn-helix domain-containing prote) only 43.4% identity / 100% coverage to ramA|WP_032673604.1|NZ_CP077308.1|I6L63_RS15270
+providencia	ramR	GCF_035747985.1	Providencia stuartii 41	ramR	ortholog search: best homolog WP_004917940.1 (CidB/LrgB family autolysis modulator) only 20.6% identity / 85% coverage to ramR|WP_032673605.1|NZ_CP077308.1|I6L63_RS15280
+providencia	soxS	GCF_035747985.1	Providencia stuartii 41	soxS	ortholog search: best homolog WP_014658208.1 (helix-turn-helix domain-containing prote) only 42.6% identity / 99% coverage to soxS|NP_418486.1|NC_000913.3|b4062
+providencia	tonB	GCF_035747985.1	Providencia stuartii 41	tonB	ortholog search: best homolog WP_004920238.1 (TonB family protein) only 39.4% identity / 96% coverage to tonB|NP_415768.1|NC_000913.3|b1252
+proteus	acrD	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	acrD	ortholog search: not a reciprocal best hit: WP_004245072.1 matches acrB (multidrug efflux pump RND permease AcrB, 75.6%) in GCF_000005845.2 better than the seed (63.9%)
+proteus	ampC	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	ampC	ortholog search: best homolog WP_012368746.1 (D-alanyl-D-alanine-carboxypeptidase/endo) only 22.4% identity / 87% coverage to ampC|NP_418574.1|NC_000913.3|b4150
+proteus	ampR	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	ampR	ortholog search: best homolog WP_004245015.1 (DNA-binding transcriptional regulator Ds) only 27.8% identity / 98% coverage to ampR|WP_006810405.1|NZ_CP077308.1|I6L63_RS19330
+proteus	cirA	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	cirA	ortholog search: best homolog WP_004243977.1 (IreA family TonB-dependent siderophore r) only 36.5% identity / 94% coverage to cirA|NP_416660.1|NC_000913.3|b2155
+proteus	eptA	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	eptA	ortholog search: best homolog WP_012368811.1 (kdo(2)-lipid A phosphoethanolamine 7''-t) only 26.2% identity / 94% coverage to eptA|NP_418538.2|NC_000913.3|b4114
+proteus	fecA	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	fecA	ortholog search: best homolog WP_012367583.1 (TonB-dependent hemoglobin/transferrin/la) only 19.6% identity / 87% coverage to fecA|NP_418711.1|NC_000913.3|b4291
+proteus	fepA	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	fepA	ortholog search: best homolog WP_004243977.1 (IreA family TonB-dependent siderophore r) only 28.0% identity / 88% coverage to fepA|NP_415116.1|NC_000913.3|b0584
+proteus	fhuA	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	fhuA	ortholog search: best homolog WP_012367568.1 (TonB-dependent siderophore receptor) only 35.9% identity / 94% coverage to fhuA|NP_414692.1|NC_000913.3|b0150
+proteus	fiu	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	fiu	ortholog search: best homolog WP_012367583.1 (TonB-dependent hemoglobin/transferrin/la) only 19.2% identity / 90% coverage to fiu|NP_415326.1|NC_000913.3|b0805
+proteus	marA	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	marA	ortholog search: best homolog WP_004242629.1 (helix-turn-helix domain-containing prote) only 38.5% identity / 94% coverage to marA|NP_416048.2|NC_000913.3|b1531
+proteus	marR	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	marR	ortholog search: best homolog WP_012368138.1 (tRNA adenosine(34) deaminase TadA) only 23.8% identity / 83% coverage to marR|NP_416047.4|NC_000913.3|b1530
+proteus	mdtE	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	mdtE	ortholog search: not a reciprocal best hit: WP_004247237.1 matches acrA (multidrug efflux pump membrane fusion li, 61.8%) in GCF_000005845.2 better than the seed (51.7%)
+proteus	mdtF	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	mdtF	ortholog search: not a reciprocal best hit: WP_004245072.1 matches acrB (multidrug efflux pump RND permease AcrB, 75.6%) in GCF_000005845.2 better than the seed (67.8%)
+proteus	mrcB	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	mrcB	ortholog search: best homolog WP_012368592.1 (peptidoglycan glycosyltransferase/peptid) only 23.3% identity / 77% coverage to mrcB|NP_414691.1|NC_000913.3|b0149
+proteus	ompC	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	ompC	ortholog search: not a reciprocal best hit: WP_004247675.1 matches ompN (outer membrane porin N, 57.3%) in GCF_000005845.2 better than the seed (51.8%)
+proteus	ompF	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	ompF	ortholog search: not a reciprocal best hit: WP_004247675.1 matches ompN (outer membrane porin N, 57.3%) in GCF_000005845.2 better than the seed (50.9%)
+proteus	phoE	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	phoE	ortholog search: not a reciprocal best hit: WP_004247675.1 matches ompN (outer membrane porin N, 57.3%) in GCF_000005845.2 better than the seed (54.0%)
+proteus	pmrA	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	pmrA	ortholog search: best homolog WP_004243597.1 (response regulator) only 41.0% identity / 100% coverage to pmrA|NP_418537.1|NC_000913.3|b4113
+proteus	pmrB	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	pmrB	ortholog search: best homolog WP_012368538.1 (two-component system sensor histidine ki) only 25.1% identity / 90% coverage to pmrB|NP_418536.1|NC_000913.3|b4112
+proteus	pmrD	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	pmrD	ortholog search: best homolog WP_004249265.1 (co-chaperone GroES) only 25.9% identity / 85% coverage to pmrD|NP_416762.2|NC_000913.3|b2259
+proteus	qseB	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	qseB	ortholog search: best homolog WP_004243597.1 (response regulator) only 41.1% identity / 100% coverage to qseB|NP_417497.1|NC_000913.3|b3025
+proteus	qseC	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	qseC	ortholog search: best homolog WP_012368077.1 (ATP-binding protein) only 26.9% identity / 97% coverage to qseC|NP_417498.1|NC_000913.3|b3026
+proteus	ramA	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	ramA	ortholog search: best homolog WP_004242629.1 (helix-turn-helix domain-containing prote) only 43.4% identity / 96% coverage to ramA|WP_032673604.1|NZ_CP077308.1|I6L63_RS15270
+proteus	ramR	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	ramR	ortholog search: best homolog WP_004248206.1 (transcriptional regulator BetI) only 28.2% identity / 86% coverage to ramR|WP_032673605.1|NZ_CP077308.1|I6L63_RS15280
+proteus	soxS	GCF_000069965.1	Proteus mirabilis HI4320 HI4320	soxS	ortholog search: best homolog WP_004243460.1 (helix-turn-helix domain-containing prote) only 43.0% identity / 100% coverage to soxS|NP_418486.1|NC_000913.3|b4062
+morganella	acrD	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	acrD	ortholog search: not a reciprocal best hit: WP_015422956.1 matches acrB (multidrug efflux pump RND permease AcrB, 74.3%) in GCF_000005845.2 better than the seed (62.0%)
+morganella	cirA	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	cirA	ortholog search: best homolog WP_004904321.1 (TonB-dependent receptor domain-containin) only 37.9% identity / 94% coverage to cirA|NP_416660.1|NC_000913.3|b2155
+morganella	eptA	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	eptA	ortholog search: best homolog WP_004234993.1 (kdo(2)-lipid A phosphoethanolamine 7''-t) only 28.2% identity / 95% coverage to eptA|NP_418538.2|NC_000913.3|b4114
+morganella	fecA	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	fecA	ortholog search: best homolog WP_004237757.1 (TonB-dependent receptor family protein) only 42.7% identity / 88% coverage to fecA|NP_418711.1|NC_000913.3|b4291
+morganella	fepA	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	fepA	ortholog search: best homolog WP_004904321.1 (TonB-dependent receptor domain-containin) only 28.1% identity / 87% coverage to fepA|NP_415116.1|NC_000913.3|b0584
+morganella	fiu	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	fiu	ortholog search: best homolog WP_004234680.1 (TonB-dependent siderophore receptor) only 21.7% identity / 87% coverage to fiu|NP_415326.1|NC_000913.3|b0805
+morganella	marA	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	marA	ortholog search: best homolog WP_004235398.1 (helix-turn-helix domain-containing prote) only 37.7% identity / 94% coverage to marA|NP_416048.2|NC_000913.3|b1531
+morganella	marR	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	marR	ortholog search: best homolog WP_004238517.1 (STM0539 family protein) only 19.6% identity / 90% coverage to marR|NP_416047.4|NC_000913.3|b1530
+morganella	mdtE	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	mdtE	ortholog search: best homolog WP_015422955.1 (efflux RND transporter periplasmic adapt) only 49.0% identity / 100% coverage to mdtE|NP_417970.1|NC_000913.3|b3513
+morganella	mdtF	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	mdtF	ortholog search: not a reciprocal best hit: WP_015422956.1 matches acrB (multidrug efflux pump RND permease AcrB, 74.3%) in GCF_000005845.2 better than the seed (66.4%)
+morganella	ompF	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	ompF	ortholog search: not a reciprocal best hit: WP_032098466.1 matches ompN (outer membrane porin N, 58.1%) in GCF_000005845.2 better than the seed (55.0%)
+morganella	phoE	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	phoE	ortholog search: not a reciprocal best hit: WP_032098466.1 matches ompN (outer membrane porin N, 58.1%) in GCF_000005845.2 better than the seed (56.8%)
+morganella	pmrA	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	pmrA	ortholog search: best homolog WP_004238161.1 (quorum sensing response regulator transc) only 40.5% identity / 100% coverage to pmrA|NP_418537.1|NC_000913.3|b4113
+morganella	pmrB	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	pmrB	ortholog search: best homolog WP_004236627.1 (envelope stress sensor histidine kinase ) only 25.3% identity / 94% coverage to pmrB|NP_418536.1|NC_000913.3|b4112
+morganella	pmrD	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	pmrD	ortholog search: best homolog WP_004236327.1 (BolA family iron metabolism protein IbaG) only 28.1% identity / 82% coverage to pmrD|NP_416762.2|NC_000913.3|b2259
+morganella	ramA	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	ramA	ortholog search: best homolog WP_004235398.1 (helix-turn-helix domain-containing prote) only 45.1% identity / 96% coverage to ramA|WP_032673604.1|NZ_CP077308.1|I6L63_RS15270
+morganella	ramR	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	ramR	ortholog search: best homolog WP_004235704.1 (CerR family C-terminal domain-containing) only 22.4% identity / 91% coverage to ramR|WP_032673605.1|NZ_CP077308.1|I6L63_RS15280
+morganella	soxR	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	soxR	ortholog search: best homolog WP_015423003.1 (fimbrial protein) only 22.7% identity / 83% coverage to soxR|NP_418487.1|NC_000913.3|b4063
+morganella	soxS	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	soxS	ortholog search: best homolog WP_004235398.1 (helix-turn-helix domain-containing prote) only 41.7% identity / 99% coverage to soxS|NP_418486.1|NC_000913.3|b4062
+morganella	tonB	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	tonB	ortholog search: best homolog WP_004238170.1 (TonB family protein) only 44.4% identity / 94% coverage to tonB|NP_415768.1|NC_000913.3|b1252
+morganella	ugd	GCF_006094455.1	Morganella morganii subsp. morganii ATCC 25830	ugd	ortholog search: best homolog WP_004238197.1 (UDP-glucose dehydrogenase family protein) only 25.2% identity / 99% coverage to ugd|NP_416532.1|NC_000913.3|b2028
+raoultella	ampC	GCF_000783935.2	Klebsiella planticola FDAARGOS_64	ampC	ortholog search: best homolog WP_047665135.1 (YchO/YchP family invasin) only 18.4% identity / 76% coverage to ampC|NP_418574.1|NC_000913.3|b4150
+raoultella	mdtE	GCF_000783935.2	Klebsiella planticola FDAARGOS_64	mdtE	ortholog search: not a reciprocal best hit: WP_032689203.1 matches acrA (multidrug efflux pump membrane fusion li, 85.9%) in GCF_000005845.2 better than the seed (54.0%)
+raoultella	mdtF	GCF_000783935.2	Klebsiella planticola FDAARGOS_64	mdtF	ortholog search: not a reciprocal best hit: WP_032689204.1 matches acrB (multidrug efflux pump RND permease AcrB, 92.5%) in GCF_000005845.2 better than the seed (70.6%)
+raoultella	ompC	GCF_000783935.2	Klebsiella planticola FDAARGOS_64	ompC	ortholog search: not a reciprocal best hit: WP_047663328.1 matches ompK36 (porin OmpK36, 95.4%) in GCF_006364295.1 better than the seed (67.5%)
+raoultella	ompF	GCF_000783935.2	Klebsiella planticola FDAARGOS_64	ompF	ortholog search: not a reciprocal best hit: WP_047663328.1 matches ompC (outer membrane porin C, 77.4%) in GCF_000005845.2 better than the seed (59.2%)
+raoultella	ompK37	GCF_000783935.2	Klebsiella planticola FDAARGOS_64	ompK37	ortholog search: not a reciprocal best hit: WP_047663328.1 matches ompK36 (porin OmpK36, 95.4%) in GCF_006364295.1 better than the seed (68.5%)

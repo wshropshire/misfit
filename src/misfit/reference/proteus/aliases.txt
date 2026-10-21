@@ -1,0 +1,2 @@
+# species names or regexes routed to this panel, one per line
+^proteus
