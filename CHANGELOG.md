@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Added — `misfit-db` orthology routes
+
+- `misfit-db add-ortholog`: add gene(s) to a panel from a RefSeq genome, by RefSeq name
+  or, when the genome leaves the gene unnamed, by reciprocal-best-hit orthology to an
+  allele already in another panel (`--seed`). Identity/coverage floors and the
+  reciprocal check are recorded in the `PROVENANCE.tsv` evidence; failures go to
+  `UNRESOLVED.tsv` with the reason.
+- `misfit-db extend-panel`: add one species-representative allele per gene, from
+  `--reference-taxon` genomes or `--from-provenance` (the genomes the panel already
+  uses), screened exactly like `add-allele`.
+- `misfit-db add-panel --reference-taxon NAME --genes-like PANEL[,PANEL]`: seed a new
+  organism panel with every gene of the template panel(s).
+- RefSeq CDS downloads are cached (`ncbi_cache/<accession>.cds.fna`).
+
 ## v1.0.0
 
 The first stable release. Two changes matter most: the reference set goes from 7

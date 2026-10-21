@@ -26,6 +26,12 @@ header from a real record by one of these routes, in decreasing authority:
 
   --unpublished             Record an allele that has no public accession.
 
+  add-ortholog / extend-panel / add-panel --genes-like
+                            For genes RefSeq leaves unnamed: take the gene by
+                            name if annotated, else by reciprocal-best-hit
+                            orthology to an allele in another panel. Evidence
+                            (identity, coverage, RBH genome) goes to PROVENANCE.
+
 Any route that resolves an accession also requires it to be >=99% identical to
 the supplied sequence, so a mistyped accession cannot be attached to a sequence
 it does not describe.
@@ -37,7 +43,6 @@ alleles to be the same gene rather than a paralog.
 import argparse
 import csv
 import re
-import sys
 import time
 import urllib.parse
 import urllib.request
@@ -146,17 +151,70 @@ def check_orf(nt):
     return bad
 
 
-def resolve_from_assembly(accession, gene, seq, cache="ncbi_cache"):
-    """Pull the gene's CDS out of a RefSeq assembly and build the header from it."""
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from urllib.request import urlopen
+def _download_cds_fasta(accession, cache="ncbi_cache"):
+    """The assembly's annotated CDS FASTA (cds_from_genomic.fna), cached on disk.
+
+    Ortholog searches read the same reference genomes over and over (every new
+    gene is checked back against its seed panel's genome), so the download is
+    kept under `cache/<accession>.cds.fna`.
+    """
     import io as _io, zipfile as _zip
+    cdir = Path(cache)
+    cpath = cdir / f"{accession}.cds.fna"
+    if cpath.exists() and cpath.stat().st_size > 0:
+        return cpath.read_text()
     url = (f"https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/"
            f"{accession}/download?include_annotation_type=CDS_FASTA")
-    blob = urlopen(urllib.request.Request(url, headers=UA), timeout=300).read()
-    with _zip.ZipFile(_io.BytesIO(blob)) as z:
-        name = next(n for n in z.namelist() if n.endswith("cds_from_genomic.fna"))
-        raw = z.read(name).decode()
+    last = None
+    for attempt in range(4):
+        try:
+            blob = urllib.request.urlopen(urllib.request.Request(url, headers=UA),
+                                          timeout=300).read()
+            with _zip.ZipFile(_io.BytesIO(blob)) as z:
+                name = next(n for n in z.namelist() if n.endswith("cds_from_genomic.fna"))
+                raw = z.read(name).decode()
+            break
+        except StopIteration:
+            raise SystemExit(f"{accession}: the download has no CDS annotation "
+                             f"(is it a RefSeq GCF_ assembly?)")
+        except Exception as exc:
+            last = exc
+            if attempt < 3:
+                print(f"  NCBI download failed ({type(exc).__name__}); retrying...", flush=True)
+                time.sleep(3 * (attempt + 1))
+    else:
+        raise SystemExit(f"could not download {accession}: {type(last).__name__}: {last}")
+    cdir.mkdir(parents=True, exist_ok=True)
+    cpath.write_text(raw)
+    return raw
+
+
+def assembly_cds(accession, cache="ncbi_cache"):
+    """Every annotated CDS of a RefSeq assembly as a list of dicts:
+    gene, protein_id, nuccore, locus_tag, product, location, seq (nt), aa."""
+    out, header, chunk = [], None, []
+    for line in _download_cds_fasta(accession, cache).splitlines() + [">"]:
+        if line.startswith(">"):
+            if header:
+                tags = dict(re.findall(r"\[(\w+)=([^\]]*)\]", header))
+                s = "".join(chunk).upper()
+                if s and "pseudo" not in tags:
+                    nuc = header.split("|")[1].split("_cds_")[0] if "|" in header else ""
+                    out.append({"gene": tags.get("gene", ""),
+                                "protein_id": tags.get("protein_id", "NA"), "nuccore": nuc,
+                                "locus_tag": tags.get("locus_tag", "NA"),
+                                "product": tags.get("protein", ""),
+                                "location": tags.get("location", "-"),
+                                "seq": s, "aa": translate(s)})
+            header, chunk = line[1:], []
+        else:
+            chunk.append(line.strip())
+    return out
+
+
+def resolve_from_assembly(accession, gene, seq, cache="ncbi_cache"):
+    """Pull the gene's CDS out of a RefSeq assembly and build the header from it."""
+    raw = _download_cds_fasta(accession, cache)
     best = None
     header, chunk = None, []
     for line in raw.splitlines() + [">"]:
@@ -547,6 +605,8 @@ def cmd_add_panel(args, root):
     pdir = root / name
     if pdir.exists():
         raise SystemExit(f"panel {name!r} already exists at {pdir}")
+    if getattr(args, "genes_like", None):
+        return _add_panel_like(args, root, name, pdir)
     if args.dry_run:
         print(f"  --dry-run: would create {pdir}")
         if args.from_assembly:
@@ -588,6 +648,316 @@ def cmd_add_panel(args, root):
             print(f"  not annotated in that assembly: {', '.join(missing)}")
     else:
         print("  empty panel; add genes with `misfit-db add-gene`")
+
+
+# ---------------------------------------------------------------- orthologs
+#
+# RefSeq does not name every gene (cirA/fepA in Enterobacter, ramR in some
+# Klebsiella, most of the panel in Proteus/Providencia), and the panels were
+# built by refusing to guess: those genes sit in UNRESOLVED.tsv. The route below
+# fills them without guessing either. The gene is found in the target genome by
+# homology to an allele already in another panel, and only accepted when the
+# relationship is one-to-one: the target protein's best match back in the seed
+# allele's own genome must be the seed allele itself (reciprocal best hit). That
+# is what separates cirA from the dozen other TonB-dependent receptors, or ompF
+# from ompC/phoE, which a plain best-hit would confuse.
+
+ORTHOLOG_DEFAULT_MIN_ID = 60.0
+ORTHOLOG_DEFAULT_MIN_COV = 80.0
+
+
+def _kmers(aa, k=3):
+    return {aa[i:i + k] for i in range(len(aa) - k + 1)}
+
+
+def aa_hit(q, t):
+    """(identity %, coverage % of q) from a global protein alignment."""
+    aln = _AA.align(q, t)[0]
+    pairs = [(x, y) for x, y in zip(aln[0], aln[1]) if x != "-" and y != "-"]
+    m = sum(1 for x, y in pairs if x == y)
+    return (100.0 * m / len(pairs) if pairs else 0.0,
+            100.0 * len(pairs) / len(q) if q else 0.0)
+
+
+def best_hits(query_aa, proteome, top=10, prefilter=40):
+    """Proteome entries ranked by identity to query_aa (k-mer prefilter, then align)."""
+    qk = _kmers(query_aa)
+    if not qk:
+        return []
+    scored = sorted(proteome, key=lambda c: -len(qk & _kmers(c["aa"])))[:prefilter]
+    hits = []
+    for c in scored:
+        pid, cov = aa_hit(query_aa, c["aa"])
+        hits.append((pid, cov, c))
+    hits.sort(key=lambda h: (-h[0] * min(h[1], 100.0), -h[0]))
+    return hits[:top]
+
+
+def _provenance_rows(root):
+    path = root / "PROVENANCE.tsv"
+    return list(csv.DictReader(open(path), delimiter="\t")) if path.exists() else []
+
+
+def seed_allele(root, seed_panel, gene):
+    """The canonical (first) allele of `gene` in `seed_panel`, with the assembly it
+    came from (from PROVENANCE), so the reciprocal check can use that genome."""
+    panel = resolve_panel(seed_panel, root) or seed_panel
+    f = root / panel / f"ref_{gene}.fasta"
+    if not f.exists():
+        return None
+    rec = next(SeqIO.parse(f, "fasta"))
+    asm = next((r["assembly_accession"] for r in _provenance_rows(root)
+                if r["panel"] == panel and r["ref_id"] == rec.id), "-")
+    return {"panel": panel, "ref_id": rec.id, "seq": str(rec.seq).upper(),
+            "aa": translate(str(rec.seq).upper()), "assembly": asm}
+
+
+def find_ortholog(gene, target_cds, seed, seed_proteome=None,
+                  min_id=ORTHOLOG_DEFAULT_MIN_ID, min_cov=ORTHOLOG_DEFAULT_MIN_COV):
+    """Locate `gene` in a target genome.
+
+    1. RefSeq already names it (gene=...)                  -> evidence refseq_gene_name
+    2. otherwise the best homolog of the seed allele, kept only if identity and
+       coverage pass and it is the reciprocal best hit of the seed allele in the
+       seed genome                                          -> evidence ortholog
+    Returns (cds dict, evidence string) or (None, reason).
+    """
+    named = [c for c in target_cds if c["gene"].lower() == gene.lower()]
+    if named:
+        if seed:
+            named.sort(key=lambda c: -aa_hit(seed["aa"], c["aa"])[0])
+        return named[0], "refseq_gene_name"
+    if not seed:
+        return None, f"no CDS annotated gene={gene} and no seed allele to search with"
+    hits = best_hits(seed["aa"], target_cds)
+    if not hits:
+        return None, "no homolog found"
+    pid, cov, cand = hits[0]
+    if pid < min_id or cov < min_cov:
+        return None, (f"best homolog {cand['protein_id']} ({cand['product'][:40]}) only "
+                      f"{pid:.1f}% identity / {cov:.0f}% coverage to {seed['ref_id']}")
+    lo, hi = len(seed["aa"]) * (1 - LEN_TOLERANCE), len(seed["aa"]) * (1 + LEN_TOLERANCE)
+    if not lo <= len(cand["aa"]) <= hi:
+        return None, (f"best homolog {cand['protein_id']} is {len(cand['aa'])} aa vs "
+                      f"{len(seed['aa'])} aa seed (outside +/-{LEN_TOLERANCE:.0%})")
+    rbh = "reciprocal check skipped (seed genome unknown)"
+    if seed_proteome:
+        back = best_hits(cand["aa"], seed_proteome, top=1)
+        if not back:
+            return None, "reciprocal search returned nothing"
+        bpid, _, bc = back[0]
+        seed_pid = aa_hit(cand["aa"], seed["aa"])[0]
+        if bc["aa"] != seed["aa"] and bpid > seed_pid + 0.5:
+            return None, (f"not a reciprocal best hit: {cand['protein_id']} matches "
+                          f"{bc['gene'] or bc['locus_tag']} ({bc['product'][:40]}, {bpid:.1f}%) "
+                          f"in {seed['assembly']} better than the seed ({seed_pid:.1f}%)")
+        rbh = f"reciprocal best hit in {seed['assembly']}"
+    return cand, (f"ortholog of {seed['panel']} {seed['ref_id'].split('|')[0]} "
+                  f"({seed['ref_id'].split('|')[1]}) by {pid:.1f}% aa identity, "
+                  f"{cov:.0f}% coverage; {rbh}")
+
+
+def append_unresolved(root, panel, gene, assembly, organism, reason):
+    path = root / "UNRESOLVED.tsv"
+    cols = list(csv.DictReader(open(path), delimiter="\t").fieldnames) if path.exists() else \
+        ["panel", "gene", "assembly_accession", "organism", "searched_gene_names",
+         "searched_products"]
+    rows = [r for r in csv.DictReader(open(path), delimiter="\t")] if path.exists() else []
+    if any(r["panel"] == panel and r["gene"] == gene and r["assembly_accession"] == assembly
+           for r in rows):
+        return
+    new = not path.exists()
+    with open(path, "a", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=cols, delimiter="\t", extrasaction="ignore")
+        if new:
+            w.writeheader()
+        w.writerow({"panel": panel, "gene": gene, "assembly_accession": assembly,
+                    "organism": organism, "searched_gene_names": gene,
+                    "searched_products": f"ortholog search: {reason}"})
+
+
+def reference_assembly_for_taxon(taxon):
+    """RefSeq reference genome for a taxon name; falls back to the first complete
+    RefSeq genome when the taxon has no designated reference."""
+    base = ("https://api.ncbi.nlm.nih.gov/datasets/v2/genome/taxon/"
+            + urllib.parse.quote(taxon) + "/dataset_report?")
+    import json
+    for extra in ({"filters.reference_only": "true"},
+                  {"filters.assembly_level": "complete_genome"}):
+        q = {"filters.assembly_source": "refseq", "page_size": "5", **extra}
+        rep = json.loads(_get(base + urllib.parse.urlencode(q), timeout=120) or "{}")
+        for r in rep.get("reports", []):
+            acc = r.get("accession", "")
+            if acc.startswith("GCF_"):
+                org = r.get("organism", {}).get("organism_name", taxon)
+                strain = (r.get("organism", {}).get("infraspecific_names", {}) or {}).get("strain", "")
+                kind = "reference" if "filters.reference_only" in extra else "complete RefSeq genome"
+                return acc, f"{org} {strain}".strip(), kind
+    raise SystemExit(f"no RefSeq genome found for taxon {taxon!r}")
+
+
+def _write_gene(root, panel, gene, cand, assembly, organism, evidence, dry_run, force):
+    """Create ref_<gene>.fasta, or append to it as a further allele after the usual screen."""
+    pdir = root / panel
+    gene_file = pdir / f"ref_{gene}.fasta"
+    header = (f"{gene}|{cand['protein_id'] or 'NA'}|{cand['nuccore'] or 'NA'}|"
+              f"{cand['locus_tag'] or 'NA'}")
+    seq = cand["seq"]
+    if gene_file.exists():
+        problems, notes = screen_against_panel(gene_file, seq, gene)
+        if any("identical protein" in p for p in problems):
+            print(f"    {panel}/{gene}: identical protein already present - skipped")
+            return False
+    else:
+        problems = check_orf(seq)
+        for other in sorted(pdir.glob("ref_*.fasta")):
+            r0 = next(SeqIO.parse(other, "fasta"))
+            pid = identity(translate(str(r0.seq).upper()), cand["aa"])
+            if pid >= 90.0:
+                problems.append(f"{pid:.1f}% identical to {r0.id} in {other.name} - "
+                                f"the panel would hold this locus twice")
+                break
+    if problems and not force:
+        print(f"    {panel}/{gene}: REJECTED - " + "; ".join(problems))
+        return False
+    print(f"    {panel}/{gene}: >{header}  [{evidence}]")
+    if dry_run:
+        return True
+    if gene_file.exists():
+        append_allele(gene_file, header, seq)
+    else:
+        gene_file.write_text(f">{header}\n{seq}\n")
+    append_provenance(root, {
+        "panel": panel, "gene": gene, "ref_id": header, "source": "misfit_db_ortholog",
+        "assembly_accession": assembly, "nuccore_accession": cand["nuccore"] or "-",
+        "protein_accession": cand["protein_id"] or "-", "locus_tag": cand["locus_tag"] or "-",
+        "organism": organism or "-", "product": cand["product"] or "-",
+        "location": cand.get("location", "-"), "evidence": evidence,
+        "length_nt": len(seq), "length_aa": len(cand["aa"]),
+        "multiple_of_3": len(seq) % 3 == 0})
+    return True
+
+
+def _add_panel_like(args, root, name, pdir):
+    """add-panel --genes-like: the new panel gets every gene the template panel(s)
+    carry, each taken from the new organism's genome by name or by reciprocal-best-hit
+    orthology to the template allele. Genes not found go to UNRESOLVED.tsv."""
+    templates = [t.strip() for t in args.genes_like.split(",") if t.strip()]
+    if args.reference_taxon:
+        asm, organism, kind = reference_assembly_for_taxon(args.reference_taxon)
+        print(f"  {args.reference_taxon}: {kind} {asm} ({organism})")
+    elif args.from_assembly:
+        asm, organism = args.from_assembly, args.organism or "-"
+    else:
+        raise SystemExit("--genes-like needs --reference-taxon or --from-assembly")
+    genes = ([g.strip() for g in args.genes.split(",")] if args.genes else
+             sorted({p.stem[4:] for t in templates
+                     for p in (root / (resolve_panel(t, root) or t)).glob("ref_*.fasta")}))
+    if not args.dry_run:
+        pdir.mkdir(parents=True)
+        aliases = [a.strip() for a in (args.aliases or "").split(",") if a.strip()]
+        if aliases:
+            (pdir / "aliases.txt").write_text(
+                "# species names or regexes routed to this panel, one per line\n"
+                + "\n".join(aliases) + "\n")
+            print(f"  routing: {', '.join(aliases)} -> {name}")
+    else:
+        print(f"  --dry-run: would create {pdir}")
+    target = assembly_cds(asm, args.cache)
+    added, missing = [], []
+    for gene in genes:
+        seed, seed_prot = _seed_for(root, gene, templates, args.cache)
+        cand, ev = find_ortholog(gene, target, seed, seed_prot, args.min_identity,
+                                 args.min_coverage)
+        if cand is None:
+            print(f"    {name}/{gene}: not found - {ev}")
+            missing.append(gene)
+            if not args.dry_run:
+                append_unresolved(root, name, gene, asm, organism, ev)
+            continue
+        if args.dry_run:
+            print(f"    {name}/{gene}: {cand['protein_id']} [{ev}]")
+            added.append(gene)
+            continue
+        if _write_gene(root, name, gene, cand, asm, organism, ev, False, args.force):
+            added.append(gene)
+    print(f"\n  {name}: {len(added)} genes added, {len(missing)} not found"
+          + (f" ({', '.join(missing)})" if missing else ""))
+
+
+def _seed_for(root, gene, seed_panels, cache):
+    for sp in seed_panels:
+        s = seed_allele(root, sp, gene)
+        if s:
+            prot = assembly_cds(s["assembly"], cache) if s["assembly"].startswith("GCF_") else None
+            return s, prot
+    return None, None
+
+
+def cmd_add_ortholog(args, root):
+    """Add one gene (or, if the panel already has it, one more allele) found by orthology."""
+    panel = resolve_panel(args.panel, root) or args.panel
+    if not (root / panel).is_dir():
+        raise SystemExit(f"no panel {panel!r}")
+    if args.reference_taxon:
+        asm, organism, kind = reference_assembly_for_taxon(args.reference_taxon)
+        print(f"  {args.reference_taxon}: {kind} {asm} ({organism})")
+    else:
+        asm, organism = args.from_assembly, args.organism or "-"
+    if not asm:
+        raise SystemExit("give --from-assembly GCF_... or --reference-taxon NAME")
+    target = assembly_cds(asm, args.cache)
+    seeds = [s.strip() for s in (args.seed or "").split(",") if s.strip()]
+    ok = 0
+    for gene in [g.strip() for g in args.gene.split(",") if g.strip()]:
+        seed, seed_prot = _seed_for(root, gene, seeds or [panel], args.cache)
+        cand, ev = find_ortholog(gene, target, seed, seed_prot, args.min_identity,
+                                 args.min_coverage)
+        if cand is None:
+            print(f"    {panel}/{gene}: not added - {ev}")
+            if not args.dry_run:
+                append_unresolved(root, panel, gene, asm, organism, ev)
+            continue
+        ok += _write_gene(root, panel, gene, cand, asm, organism, ev, args.dry_run, args.force)
+    print(f"  {ok} written{' (dry run)' if args.dry_run else ''}")
+
+
+def cmd_extend_panel(args, root):
+    """Add one representative allele per species to every gene (or --genes) of a panel.
+
+    Genomes come from --reference-taxon (each taxon's RefSeq reference) and/or
+    --from-provenance (every genome the panel already draws alleles from, so a gene
+    added later gets the same species representatives as the genes built with it).
+    """
+    panel = resolve_panel(args.panel, root) or args.panel
+    pdir = root / panel
+    genes = ([g.strip() for g in args.genes.split(",")] if args.genes else
+             sorted(p.stem[4:] for p in pdir.glob("ref_*.fasta")))
+    targets = []
+    if args.from_provenance:
+        seen = {}
+        for r in _provenance_rows(root):
+            a = r.get("assembly_accession", "-")
+            if r["panel"] == panel and a.startswith("GCF_") and a not in seen:
+                seen[a] = r.get("organism", "-")
+        targets += [(f"{org} (panel genome)", a, org, "panel genome") for a, org in seen.items()]
+    for taxon in [t.strip() for t in (args.reference_taxon or "").split(",") if t.strip()]:
+        asm, organism, kind = reference_assembly_for_taxon(taxon)
+        targets.append((taxon, asm, organism, kind))
+    if not targets:
+        raise SystemExit("give --reference-taxon and/or --from-provenance")
+    for taxon, asm, organism, kind in targets:
+        print(f"\n  {taxon}: {kind} {asm} ({organism})")
+        target = assembly_cds(asm, args.cache)
+        for gene in genes:
+            seed, seed_prot = _seed_for(root, gene, [panel], args.cache)
+            cand, ev = find_ortholog(gene, target, seed, seed_prot,
+                                     max(args.min_identity, ORTHOLOG_MIN_ID), args.min_coverage)
+            if cand is None:
+                print(f"    {panel}/{gene}: no {taxon} allele - {ev}")
+                continue
+            ev = "species representative; " + ev
+            _write_gene(root, panel, gene, cand, asm, organism, ev, args.dry_run, args.force)
 
 
 def main():
@@ -652,7 +1022,49 @@ def main():
                    help="Seed the panel from this RefSeq assembly's annotation")
     n.add_argument("--genes", default=None, help="Comma-separated genes to seed")
     n.add_argument("--organism", default=None)
+    n.add_argument("--reference-taxon", default=None,
+                   help="Use this taxon's RefSeq reference genome (e.g. 'Serratia marcescens')")
+    n.add_argument("--genes-like", default=None,
+                   help="Comma-separated template panel(s), e.g. e_coli,enterobacter: the new "
+                        "panel gets every gene they carry, found by name or by reciprocal-best-hit "
+                        "orthology to the template allele")
+    n.add_argument("--min-identity", type=float, default=50.0,
+                   help="Ortholog %% aa identity floor for --genes-like (default 50; distant genera)")
+    n.add_argument("--min-coverage", type=float, default=ORTHOLOG_DEFAULT_MIN_COV)
+    n.add_argument("--cache", default="ncbi_cache")
+    n.add_argument("--force", action="store_true")
     n.add_argument("--dry-run", action="store_true")
+
+    o = sub.add_parser("add-ortholog",
+                       help="Add gene(s) to a panel from a genome, by RefSeq name or by "
+                            "reciprocal-best-hit orthology to another panel's allele")
+    o.add_argument("--panel", required=True)
+    o.add_argument("--gene", required=True, help="Gene name, or comma-separated list")
+    o.add_argument("--from-assembly", default=None, help="Target RefSeq assembly (GCF_...)")
+    o.add_argument("--reference-taxon", default=None,
+                   help="Alternative to --from-assembly: the taxon's RefSeq reference genome")
+    o.add_argument("--seed", default=None,
+                   help="Panel(s) holding the seed allele, e.g. e_coli (default: the panel itself)")
+    o.add_argument("--min-identity", type=float, default=ORTHOLOG_DEFAULT_MIN_ID)
+    o.add_argument("--min-coverage", type=float, default=ORTHOLOG_DEFAULT_MIN_COV)
+    o.add_argument("--organism", default=None)
+    o.add_argument("--cache", default="ncbi_cache")
+    o.add_argument("--dry-run", action="store_true")
+    o.add_argument("--force", action="store_true")
+
+    x = sub.add_parser("extend-panel",
+                       help="Add a species-representative allele to every gene of a panel")
+    x.add_argument("--panel", required=True)
+    x.add_argument("--reference-taxon", default=None,
+                   help="Comma-separated species, e.g. 'Serratia nevei,Serratia sarumanii'")
+    x.add_argument("--from-provenance", action="store_true",
+                   help="Use every RefSeq genome the panel already draws alleles from")
+    x.add_argument("--genes", default=None, help="Only these genes (default: all in the panel)")
+    x.add_argument("--min-identity", type=float, default=ORTHOLOG_MIN_ID)
+    x.add_argument("--min-coverage", type=float, default=ORTHOLOG_DEFAULT_MIN_COV)
+    x.add_argument("--cache", default="ncbi_cache")
+    x.add_argument("--dry-run", action="store_true")
+    x.add_argument("--force", action="store_true")
 
     args = ap.parse_args()
     root = Path(args.ref_root) if args.ref_root else reference_root()
@@ -662,6 +1074,10 @@ def main():
         cmd_add_gene(args, root)
     elif args.command == "add-panel":
         cmd_add_panel(args, root)
+    elif args.command == "add-ortholog":
+        cmd_add_ortholog(args, root)
+    elif args.command == "extend-panel":
+        cmd_extend_panel(args, root)
 
 
 if __name__ == "__main__":

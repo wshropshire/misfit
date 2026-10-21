@@ -320,6 +320,43 @@ consistent with the gene's other alleles, not already present, and not a paralog
 problems are reported and the write refused. Adding *E. coli* UTI89 `ompC` to the
 `e_coli` panel is rejected at 77.3% identity as a paralog rather than an allele.
 
+### Genes RefSeq does not name — orthology
+
+The panels were built without guessing: a gene RefSeq leaves unnamed in a panel's
+reference genome (`cirA`/`fepA` in *Enterobacter*, `fiu` in *Klebsiella*, most of a
+*Proteus* or *Providencia* genome) is listed in `reference/UNRESOLVED.tsv` instead.
+Three commands fill those gaps without guessing either. A gene is taken by its RefSeq
+name when the genome has one; otherwise it is found by homology to an allele already in
+another panel (the *seed*), and accepted only if
+
+- identity and coverage pass (`--min-identity`, default 60%; `--min-coverage` 80%), and
+- it is the **reciprocal best hit**: the candidate's best match back in the seed
+  allele's own genome is the seed allele. This is what tells *cirA* from the other
+  TonB-dependent receptors, or *ompF* from *ompC*/*phoE*, which a plain best hit confuses.
+
+```bash
+# a gene missing from an existing panel, seeded from another panel's allele
+misfit-db add-ortholog --panel enterobacter --gene cirA,fiu,fepA \
+    --from-assembly GCF_019048245.1 --seed e_coli
+
+# the same genes for every species the panel already represents
+misfit-db extend-panel --panel enterobacter --genes cirA,fiu,fepA --from-provenance
+
+# a new organism: every gene of the template panel(s), by name or by orthology
+misfit-db add-panel --panel serratia --aliases '^serratia' \
+    --reference-taxon "Serratia marcescens" --genes-like e_coli,enterobacter
+misfit-db extend-panel --panel serratia --reference-taxon "Serratia nevei,Serratia sarumanii"
+```
+
+`--reference-taxon` uses the taxon's RefSeq reference genome (or, if it has none, its
+first complete RefSeq genome). Genome downloads are cached in `ncbi_cache/`. Every
+allele written gets a `PROVENANCE.tsv` row whose `evidence` states the route
+(`refseq_gene_name`, or `ortholog of e_coli cirA (WP_...) by 76.1% aa identity, 100%
+coverage; reciprocal best hit in GCF_000005845.2`); genes still not found are added to
+`UNRESOLVED.tsv` with the reason. `add-panel --genes-like` defaults to 50% identity
+because a new genus can sit far from the template (Morganellaceae vs *E. coli*); review
+low-identity genes before relying on them, and run such panels with `--preset asm20`.
+
 ---
 
 ## Experimental

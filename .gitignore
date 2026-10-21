@@ -25,3 +25,4 @@ __pycache__/
 src/misfit/reference/*/ref_*/
 *.clxn
 .collection
+ncbi_cache/
